@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MNIFAF.COM</title>
+<style>
+    body {
+        background-color: #333333;
+    }
+    button {
+        border: none;
+        color: var(--native-dark-font-color);
+        background-image: none;
+        font-size: 1.3rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin: 10px;
+        cursor: pointer;
+        border-radius: 2.5px;
+        height: 30px;
+    }
+    input[type="text" i]
+    {
+        height: 26px;
+        margin-top: 10px;
+    }
+    #checkbox span {
+        color: white;
+    }
+    #inputContainer
+    {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: left;
+    }
+    #symbolContainer
+    {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+    }
+    #symbolContainer > button {
+        margin-bottom: 2px;;
+    }
+    button:hover {
+        background-image: linear-gradient(60deg, #96deda 0%, #50c9c3 100%);
+    }
+    table {
+        color: white;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="inputContainer">
+            <input type="text" name="stock" id="stockSymbol">
+            <button id="btn">Click Me</button>
+            <div id="checkbox">
+                <div><input type="checkbox" name="scOwerview" checked> <span> sc Owerview </span></div>
+                <div><input type="checkbox" name="csChart" checked> <span> sc Chart </span></div>
+                <div><input type="checkbox" name="psxOwerview" checked> <span> psx Owerview </span></div>
+                <div><input type="checkbox" name="sarmaayaOwerview" checked> <span> sarmaaya Owerview </span></div>
+                <div><input type="checkbox" name="khistocksOverview" checked> <span> khistocks Owerview </span></div>
+
+            </div>
+            <button onclick="window.open('https\://www.akdtrade.com/CompanyAnnouncements.aspx', '_blank')" target="_blank">AKD Divident</button>
+            <button onclick="window.open('https\://dps.psx.com.pk/', '_blank')" target="_blank">Data Portal</button>
+            <button onclick="window.open('https\://dps.psx.com.pk/historical')" target="_blank">DPS History</button>
+            <button onclick="window.open('https\://www.psx.com.pk/psx/announcement/financial-announcements')" target="_blank">DPS Financial Announments</button>
+            <button onclick="window.open('https\://dps.psx.com.pk/announcements/companies')" target="_blank">List companies Announments</button>
+            <button onclick="window.open('https\://www.khistocks.com/company-information/dividend-data.html')" target="_blank">Divident History</button>
+            <button onclick="window.open('https\://www.khistocks.com/company-information/annual-reports.html')" target="_blank">Annual Report</button>       
+            <button onclick="window.open('https\://www.khistocks.com/company-information/financial-highlights.html')" target="_blank">Financial Highlights</button>       
+            <button onclick="window.open('https\://www.khistocks.com/company-information/announcements.html')" target="_blank">Financial Highlights</button>       
+
+           
+        </div>
+        <br>
+    
+        <div id="symbolContainer"></div>
+        <br>
+        
+        <form id="stockForm" action="#">
+            <input type="text" name="faceValue" id="faceValue" placeholder="Face value" value="">
+            <input type="text" name="noOfShares" id="noOfShares" placeholder="Share" value="">
+            <input type="text" name="dividend" id="dividend" placeholder="Divident" value="">
+            <input type="text" name="bonus" id="bonus" placeholder="bonus" value="">
+            <input type="text" name="totalValue" id="totalValue" placeholder="Total value" value="">
+            <input type="text" name="totalDividentValue" id="totalDividentValue" placeholder="Total Dividend Value" value="">
+            <button type="submit" id="submitStock">Submit</button>
+        </form>
+
+        <div id="stockContainer">
+            <table>
+                <tr>
+                    <th>noOfShares</th>
+                    <th>dividend</th>
+                    <th>bonus</th>
+                    <th>totalValue</th>
+                    <th>totalCost</th>
+                </tr>
+                <tbody id="trOfStock">
+                <!-- <tr>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>1</td>
+                </tr> -->
+    
+              </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+    <script>
+        let dataPortal = 'https://dps.psx.com.pk/';
+        let scTradeBaseUrl = 'https://scstrade.com/';
+        let sarmayaBaseUrl = "https://sarmaaya.pk/";
+        let karachiStock = "https://www.khistocks.com/";
+        let dynmaicSomArray = [];
+
+
+        function openTabs(p){
+            let params = p.toUpperCase();
+            params = params.split('-')[0];
+
+
+            let scOwerview = document.getElementsByName('scOwerview');
+            let csChart = document.getElementsByName('csChart');
+            let psxOwerview = document.getElementsByName('psxOwerview');
+            let sarmaayaOwerview = document.getElementsByName('sarmaayaOwerview');
+            let khistocksOverview = document.getElementsByName('khistocksOverview');
+            scOwerview = scOwerview[0].checked;
+            csChart = csChart[0].checked;
+            psxOwerview = psxOwerview[0].checked;
+            sarmaayaOwerview = sarmaayaOwerview[0].checked;
+            khistocksOverview = khistocksOverview[0].checked;
+
+            let urlsArray = [];
+            let psxDataPortal = `${dataPortal}company/${params}`;
+            let sctradeFundamentals = `${scTradeBaseUrl}stockscreening/SS_CompanySnapShot.aspx?symbol=${params}`;
+            let sctradeAnalytics = `${scTradeBaseUrl}TechnicalAnalysis/TA_RealTimeCharting.aspx?symbol=${params}`;
+            let karachi = `${karachiStock}market-live/companies-live/detailed-view/${params}.html`;
+            let sarmaya = `${sarmayaBaseUrl}psx/company/${params}`;
+            
+            if(scOwerview) urlsArray.push(sctradeFundamentals);
+            if(csChart) urlsArray.push(sctradeAnalytics);
+            if(psxOwerview) urlsArray.push(psxDataPortal);
+            if(sarmaayaOwerview) urlsArray.push(sarmaya);
+            if(khistocksOverview) urlsArray.push(karachi);
+            urlsArray.forEach(function(url){
+            let link     = document.createElement('a');
+            link.href    = url;
+            link.target  = '_blank';
+            link.click();
+        });
+        }
+
+        function generateButtons() {
+            let _symbolNames = [
+            'FHAM-500-J','KOHE-500-J', 'SPWL-500-D', 'KAPCO-1-J', 'PICT-100-D' ,'PAKRI-500-D','hrpl',   'dawh', 'hinoon', 'hafl', 'indu', 'glaxo' , 'hbl','jvdc', 'mtl', 'jdws','jlicl', 'jgicl', 'epql', 'ffc', 'mcb', 'pol', 'ppl', 
+            'engro','agil', 'airlink', 'aabs', 'alnrs', 'abl', 'ahl', 'admm', 'avn', 'bafl', 'bahl', 'bhat', 'bifo',
+            'cppl', 'colg', 'dll', 'dcr', 'dyno', 'efug',
+            'eful', 'elsm', 'engro', 'efert', 'epclps', 'exide', 'fasm', 'fatima', 'ffc', 'fml', 'fimm',
+            'ghgl','gil', 'hbl', 'hmb', 'mughal',
+            'habsm', 'htl', 'humnl', 'igihl', 'inil',
+            'jksm', 'jsml', 'jlicl', 'jgicl', 'ksbp', 'kohtm', 'ktml',
+            'lpl', 'lotchem', 'luck', 'lci', 'macter', 'mari','mebl', 'mrns',
+            'lpl', 'lotchem', 'luck', 'lci', 'macter', 'mari', 'mcbim',
+            'nagc', 'natf', 'nrl', 'nestle', 'nicl', 'ncl', 'nml', 'npl', 'nons', 'ogdc', 'olpl', 'pnsc',
+            'pso', 'pkgs', 'pol', 'ppl', 'pakt', 'pcal', 'PAKOXY',
+            'ptl', 'pmpk', 'pim', 'pret', 'prwm', 'rmpl', 'rcml', 'rewm',
+            'sapl', 'sfl', 'sapt', 'srvi', 'shsml', 'shez', 'siem', 'sitc', 'scbpl', 'sngp', 'sutm',
+            'surc', 'sys', 'tgl', 'thall', 'searl', 'tripf', 'upfl', 'wahn'
+         ];
+         symbolNames = _symbolNames.sort();
+         console.log(symbolNames);
+            let output = '';
+            _symbolNames.forEach(function(s){
+                output += `<button onclick="openTabs('${s}')">${s}</button>`
+            });
+            document.getElementById('symbolContainer').innerHTML = output;
+        }
+
+        document.getElementById("btn").addEventListener('click', function(){
+            let inputElem = document.getElementById('stockSymbol');
+            dynmaicSomArray.push(inputElem.value)
+            console.log(dynmaicSomArray);
+            openTabs(inputElem.value);
+            inputElem.value = '';
+        });
+        generateButtons();
+
+        document.getElementById("submitStock").addEventListener('click', function(e){
+            e.preventDefault();
+            let stockForm = document.getElementById("stockForm");
+            let faceValue = stockForm.querySelector('#faceValue').value;
+            let noOfShares = stockForm.querySelector('#noOfShares');
+            let dividend = stockForm.querySelector('#dividend');
+            let bonus = stockForm.querySelector('#bonus');
+            let totalValue = stockForm.querySelector('#totalValue');
+            let totalDividentValue = stockForm.querySelector('#totalDividentValue');
+
+            debugger;
+            if(dividend.value) {
+                let dividendCalc = noOfShares.value * (+((+faceValue / 100) * dividend.value));
+                totalValue.value = +totalValue.value + dividendCalc;
+                totalDividentValue.value = +(+totalDividentValue.value + dividendCalc);
+            }
+            if(bonus.value) {
+                let bonusCalc =  (+((+noOfShares.value / 100) * bonus.value));
+                noOfShares.value = Math.ceil(+noOfShares.value + bonusCalc);
+            }
+            debugger;
+            let output = 
+                   `<tr><td>${noOfShares.value}</td>
+                    <td>${dividend.value}</td>
+                    <td>${bonus.value}</td>
+                    <td>${totalValue.value}</td>
+                    <td>${totalDividentValue.value}</td></tr>`;
+                    debugger;
+            document.getElementById("trOfStock").insertAdjacentHTML('beforeend', output);
+
+            dividend.value = '';
+            bonus.value = '';
+
+
+        });
+
+    </script>
+</html>
